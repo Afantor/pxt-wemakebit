@@ -1,0 +1,22 @@
+{
+    "name": "wemakebit",
+    "version": "1.0.1",
+    "description": "WeeeMake for microBit.",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*",
+        "radio": "*",
+        "neopixel": "github:Microsoft/pxt-neopixel#v0.6.8"
+    },
+    "files": [
+        "README.md",
+        "main.ts",
+        "wemakebit.cpp",
+        "shims.d.ts",
+        "enums.d.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "public": true
+}
