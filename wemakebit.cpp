@@ -18,7 +18,6 @@ namespace wemakebit {
     uint32_t mask14 = 1 << 22;
     uint32_t mask15 = 1 << 21;
     uint32_t mask16 = 1 << 16;
-    MicroBitPin P12 = uBit.io.P12;
     MicroBitPin P13 = uBit.io.P13;
     MicroBitPin P14 = uBit.io.P14;
     MicroBitPin P15 = uBit.io.P15;
@@ -47,16 +46,6 @@ namespace wemakebit {
     volatile uint8_t Display_Buffer[21]={0};
     volatile uint8_t panel_width=21;
     volatile uint8_t panel_height=7;
-    //%
-    void gpioTest(){
-        while(1){
-            P12.setDigitalValue(0);
-            for (volatile uint16_t i = 0; i < 100; i++);
-            P12.setDigitalValue(1);
-            for (volatile uint8_t i = 0; i < 100; i++);
-        }
-    }
-
     //%
     uint8_t oneWireReset(uint8_t pinNum){
         if(pinNum == 1)
@@ -538,20 +527,20 @@ namespace wemakebit {
     //%
     uint16_t colorSensorReadValue(uint8_t pinNum, uint8_t type)
     {
-        uint8_t ColorData[6] = {0};
+        uint8_t ColorData[8] = {0};
         if(oneWireReset(pinNum) != 0)return 0;
         OneWireWriteByte(pinNum,0x02);
         OneWireRespond(pinNum);
-        for(uint8_t i=0;i<6;i++)
+        for(uint8_t i=0;i<8;i++)
         {
            ColorData[i]=OneWireReadByte(pinNum);
         }
         Redvalue   = (uint16_t)(ColorData[1] << 8 | ColorData[0]);
         Greenvalue = (uint16_t)(ColorData[3] << 8 | ColorData[2]);
         Bluevalue  = (uint16_t)(ColorData[5] << 8 | ColorData[4]);
-        //Colorvalue = (uint16_t)(ColorData[7] << 8 | ColorData[6]);
+        Colorvalue = (uint16_t)(ColorData[7] << 8 | ColorData[6]);
         switch(type){
-            //case 0: return Colorvalue;
+            case 0: return Colorvalue;
             case 1: return Redvalue;
             case 2: return Greenvalue;
             case 3: return Bluevalue;
@@ -772,19 +761,11 @@ namespace wemakebit {
     **We 130 DC Motor module V1.0.
      */
     //%
-    void DC130MotorRunSpeed(uint8_t pinNum, uint16_t speed)
+    void DC130MotorRunSpeed(uint8_t pinNum, int16_t speed)
     {
         speed = speed > 255 ? 255 : speed;
         speed = speed < -255 ? -255 : speed;
         
-        if(DC130Last_speed != speed)
-        {
-          DC130Last_speed = speed;
-        }
-        else
-        {
-          return;
-        }
         if(speed >= 0)
         {   
             if(oneWireReset(pinNum) != 0)return;

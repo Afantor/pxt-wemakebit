@@ -1,10 +1,33 @@
 /*
 load dependency
-"wemakebit": "file:../wemakebit.ts"
+"wemakebit": "file:../main.ts"
 */
 
 //% color=#ff6680 weight=10 icon="\uf108"
 namespace wemakebit {
+
+enum NeoPixelColors {
+    //% block=red
+    Red = 0xFF0000,
+    //% block=orange
+    Orange = 0xFFA500,
+    //% block=yellow
+    Yellow = 0xFFFF00,
+    //% block=green
+    Green = 0x00FF00,
+    //% block=blue
+    Blue = 0x0000FF,
+    //% block=indigo
+    Indigo = 0x4b0082,
+    //% block=violet
+    Violet = 0x8a2be2,
+    //% block=purple
+    Purple = 0xFF00FF,
+    //% block=white
+    White = 0xFFFFFF,
+    //% block=black
+    Black = 0x000000
+}
     const PCA9685_ADDRESS = 0x40
     const MODE1 = 0x00
     const MODE2 = 0x01
@@ -22,13 +45,13 @@ namespace wemakebit {
     const ALL_LED_OFF_H = 0xFD
 
     export enum Servos {
-        S1 = 1,
-        S2 = 2,
+        S1 = 2,
+        S2 = 1
     }
 
     export enum Motors {
         M1 = 1,
-        M2 = 2,
+        M2 = 2
     }
     export enum wPorts {
         PortA = 1,
@@ -37,8 +60,8 @@ namespace wemakebit {
         PortD = 4
     }
     export enum touchMode {
-        Mode0 = 1,
-        Mode1 = 2
+        Mode0 = 0,
+        Mode1 = 1
     }
 
     export enum ultrasonicLED {
@@ -57,7 +80,6 @@ namespace wemakebit {
         key4 = 4
     }
     export enum Colors{
-        //light = 0,
         red = 1,
         green = 2,
         blue = 3
@@ -168,7 +190,7 @@ namespace wemakebit {
     }
     /**
      * Servo Execute
-     * @param index Servo Channel; eg: S1
+     * @param index Servo Channel; eg: S1, S2
      * @param degree [0-180] degree of servo; eg: 0, 90, 180
     */
     //% blockId=wemakebit_servo block="Servo|%index|degree %degree"
@@ -203,8 +225,8 @@ namespace wemakebit {
         }
         if (index > 2 || index <= 0)
             return
-        let pp = (index - 1)*2 
-        let pn = (index - 1)*2 + 1
+        let pp = (index - 1)*2;
+        let pn = (index - 1)*2 + 1;
         if (speed >= 0) {
             setPwm(pp, 0, speed)
             setPwm(pn, 0, 0)
@@ -216,7 +238,7 @@ namespace wemakebit {
     /**
      * Execute single motors with delay
      * @param index Motor Index; eg: M1, M2
-     * @param speed [-255-255] speed of motor; eg: 150, -150
+     * @param speed [-255-255] speed of motor; eg: 150
      * @param delay seconde delay to stop; eg: 1
     */
     //% blockId=wemakebit_motor_rundelay block="Motor|%index|speed %speed|delay %delay|s"
@@ -267,7 +289,7 @@ namespace wemakebit {
     //% shim=wemakebit::getTouched
     export function getTouched(pinNum: wPorts): number {
         return 0;
-    }
+    } 
 
     /**
      * Water Atomizer Moduel set start
@@ -278,18 +300,7 @@ namespace wemakebit {
     //% shim=wemakebit::waterAtomizerSet
     export function waterAtomizerSet(pinNum: wPorts, isOn: swStatus): void {
         return;
-    }
-
-    /**
-     * 4 LED Button set LED
-    */
-    //% blockId="wemakebit_LED4ButtonSetLed" block="LED Button|%pinNum| set led |%KeyButtons| |%swStatus"
-    //% weight=22
-    //% blockGap=10
-    //% shim=wemakebit::LED4ButtonSetLed
-    export function LED4ButtonSetLed(pinNum: wPorts,index: KeyButtons, isOn: swStatus): void {
-        return;
-    }
+    }  
 
     /**
      * 4 LED Button read Key
@@ -301,7 +312,6 @@ namespace wemakebit {
     export function LED4ButtonReadKey(pinNum: wPorts, key: KeyButtons): number {
         return 0;
     }
-
     /**
      * Sliding Potentiometer read value
     */
@@ -341,6 +351,16 @@ namespace wemakebit {
     //% shim=wemakebit::getPIRMotion
     export function getPIRMotion(pinNum: wPorts): number {
         return 0;
+    } 
+    /**
+     * 4-Digital LED module Show Number
+    */
+    //% blockId="wemakebit_segmentDisplayShowNumber" block="Segment Display|%pinNum| show Number %value"
+    //% weight=22
+    //% blockGap=10
+    //% shim=wemakebit::segmentDisplayShowNumber
+    export function segmentDisplayShowNumber(pinNum: wPorts, value: number): void {
+        return;
     }
     /**
      * Joystick Module read value
@@ -383,27 +403,6 @@ namespace wemakebit {
         return 0;
     }
     /**
-     * 4-Digital LED module Show Number
-    */
-    //% blockId="wemakebit_segmentDisplayShowNumber" block="Segment Display|%pinNum| show Number %value"
-    //% weight=22
-    //% blockGap=10
-    //% shim=wemakebit::segmentDisplayShowNumber
-    export function segmentDisplayShowNumber(pinNum: wPorts, value: number): void {
-        return;
-    }
-    /**
-     * 4-Digital LED module Show Char
-    
-    //% blockId="wemakebit_segmentDisplayShowChar" block="Segment Display|%pinNum| |%Addr| show Char %value"
-    //% weight=22
-    //% blockGap=10
-    //% shim=wemakebit::segmentDisplayShowChar
-    export function segmentDisplayShowChar(pinNum: wPorts, Addr: number, Data: number): void {
-        return;
-    }
-    */
-    /**
      * Single LED set Light
     */
     //% blockId="wemakebit_singleLEDSet" block="single LED|%pinNum| set |%swStatus"
@@ -432,36 +431,6 @@ namespace wemakebit {
     //% shim=wemakebit::DC130MotorRunSpeed
     export function DC130MotorRunSpeed(pinNum: wPorts, speed: number): void {
         return;
-    }
-    /**
-     * Color Sensor set Light
-    */
-    //% blockId="wemakebit_colorSensorSetLight" block="color Sensor|%pinNum| set light |%swStatus"
-    //% weight=22
-    //% blockGap=10
-    //% shim=wemakebit::colorSensorSetLight
-    export function colorSensorSetLight(pinNum: wPorts, isOn: swStatus): void {
-        return;
-    }
-    /**
-     * color Sensor White Balance
-    */
-    //% blockId="wemakebit_colorSensorWhiteBalance" block="color Sensor|%pinNum| set White Balance"
-    //% weight=22
-    //% blockGap=10
-    //% shim=wemakebit::colorSensorWhiteBalance
-    export function colorSensorWhiteBalance(pinNum: wPorts): void {
-        return;
-    }
-    /**
-     * Color Sensor read value
-    */
-    //% blockId="wemakebit_colorSensorReadValue" block="color Sensor|%pinNum| |%Colors"
-    //% weight=22
-    //% blockGap=10
-    //% shim=wemakebit::colorSensorReadValue
-    export function colorSensorReadValue(pinNum: wPorts, type: Colors): number {
-        return 0;
     }
     /**
      * MP3 Player Set music
@@ -568,7 +537,7 @@ namespace wemakebit {
     /**
      * LEDMatrix Display Show Clock
     */
-    //% blockId="wemakebit_ledPanelShowClock" block="LED Matrix|%pinNum|show time|%hour|:|%minute"
+    //% blockId="wemakebit_ledPanelShowClock" block="LED Matrix|%pinNum|show Clock|%hour|:|%minute"
     //% weight=16
     //% blockGap=10
     //% shim=wemakebit::ledPanelShowClock
@@ -606,15 +575,5 @@ namespace wemakebit {
     export function ledPanelTurnOffDot(pinNum: wPorts, x:number,y:number): void {
         return;
     }
-    /**
-     * Ultrasonic Sensor set LED
-    
-    //% blockId="wemakebit_ultrasonicSetLed" block="ultrasonic Sensor|%pinNum| set Yellow led |%ultrasonicLED| |%swStatus"
-    //% weight=22
-    //% blockGap=10
-    //% shim=wemakebit::ultrasonicSetLed
-    export function ultrasonicSetLed(pinNum: wPorts,index: ultrasonicLED, isOn: swStatus): void {
-        return;
-    }
-    */
+
 }
